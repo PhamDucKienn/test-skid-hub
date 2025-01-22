@@ -1,0 +1,123 @@
+
+local OrionLib = loadstring(game:Htthttps:("raw.githubusercontent.com/PhamDucKienn/Gui/refs/heads/main/Gui"))()
+
+local Window = OrionLib:MakeWindow({ Name = "Skid Hub V1.25(Beta)⚡", HidePremium = false, IntroText = "Skid Hub⚡", SaveConfig = true, ConfigFolder = "OrionTest" })
+
+_G.AutoTap = true
+_G.HighSpeed = true
+_G.HighJump = true
+_G.Esp = true
+
+function esp()
+    while _G.Esp == true do
+        local Players = game:GetService("Players"):GetChildren()
+local RunService = game:GetService("RunService")
+local highlight = Instance.new("Highlight")
+highlight.Name = "Highlight"
+
+for i, v in pairs(Players) do
+    repeat wait() until v.Character
+    if not v.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
+        local highlightClone = highlight:Clone()
+        highlightClone.Adornee = v.Character
+        highlightClone.Parent = v.Character:FindFirstChild("HumanoidRootPart")
+        highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlightClone.Name = "Highlight"
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    repeat wait() until player.Character
+    if not player.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
+        local highlightClone = highlight:Clone()
+        highlightClone.Adornee = player.Character
+        highlightClone.Parent = player.Character:FindFirstChild("HumanoidRootPart")
+        highlightClone.Name = "Highlight"
+    end
+end)
+
+game.Players.PlayerRemoving:Connect(function(playerRemoved)
+    playerRemoved.Character:FindFirstChild("HumanoidRootPart").Highlight:Destroy()
+end)
+
+RunService.Heartbeat:Connect(function()
+    for i, v in pairs(Players) do
+        repeat wait() until v.Character
+        if not v.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
+            local highlightClone = highlight:Clone()
+            highlightClone.Adornee = v.Character
+            highlightClone.Parent = v.Character:FindFirstChild("HumanoidRootPart")
+            highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlightClone.Name = "Highlight"
+            task.wait(1)
+        end
+end
+end)
+
+function highjump()
+    while _G.HighJump == true do
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.JumpPower = 150
+        wait(1)
+    end
+end
+
+function highspeed()
+    while _G.HighSpeed == true do
+        local player = game.Players.LocalPlayer
+        local character = player.Character or player.CharacterAdded:Wait()
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.WalkSpeed = 100
+        wait(1)
+    end
+end
+
+function autoclick()
+    while _G.AutoTap == true do
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("AddSpeed"):FireServer()
+        wait(0.0000000000001)
+    end
+end
+
+local FarmTab = Window:MakeTab({
+    Name = "Main",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+FarmTab:AddToggle({
+    Name = "Auto Clicker",
+    Default = false,
+    Callback = function(Value)
+        _G.AutoTap = Value
+        autoclick()
+    end
+})
+
+FarmTab:AddToggle({
+    Name = "High Speed",
+    Default = false,
+    Callback = function(Value)
+        _G.HighSpeed = Value
+        highspeed()
+    end    
+})
+
+FarmTab:AddToggle({
+	Name = "High Jump",
+	Default = false,
+	Callback = function(Value)
+		_G.HighJump = Value
+        highjump()
+	end    
+})
+
+FarmTab:AddToggle((
+    Name = "Esp Players(Beta)"
+    Default = false
+    Callback = function(Value)
+        _G.Esp = Value
+        esp()
+

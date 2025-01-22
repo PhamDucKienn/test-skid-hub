@@ -1,63 +1,23 @@
+-- Load OrionLib
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/PhamDucKienn/Gui/refs/heads/main/Gui"))()
 
-local OrionLib = loadstring(game:Htthttps:("raw.githubusercontent.com/PhamDucKienn/Gui/refs/heads/main/Gui"))()
+local Window = OrionLib:MakeWindow({
+    Name = "Skid Hub V1.25(Beta)⚡",
+    HidePremium = false,
+    IntroText = "Skid Hub⚡",
+    SaveConfig = true,
+    ConfigFolder = "OrionTest"
+})
 
-local Window = OrionLib:MakeWindow({ Name = "Skid Hub V1.25(Beta)⚡", HidePremium = false, IntroText = "Skid Hub⚡", SaveConfig = true, ConfigFolder = "OrionTest" })
+-- Global settings
+_G.AutoTap = false
+_G.HighSpeed = false
+_G.HighJump = false
+_G.HighlightPlayers = false
 
-_G.AutoTap = true
-_G.HighSpeed = true
-_G.HighJump = true
-_G.Esp = true
-
-	local function esp()
-    while _G.Esp do
-        local Players = game:GetService("Players"):GetChildren()
-        local RunService = game:GetService("RunService")
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "Highlight"
- 
-        for i, v in pairs(Players) do
-            repeat wait() until v.Character
-            if not v.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
-                local highlightClone = highlight:Clone()
-                highlightClone.Adornee = v.Character
-                highlightClone.Parent = v.Character:FindFirstChild("HumanoidRootPart")
-                highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                highlightClone.Name = "Highlight"
-            end
-        end
- 
-        game.Players.PlayerAdded:Connect(function(player)
-            repeat wait() until player.Character
-            if not player.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
-                local highlightClone = highlight:Clone()
-                highlightClone.Adornee = player.Character
-                highlightClone.Parent = player.Character:FindFirstChild("HumanoidRootPart")
-                highlightClone.Name = "Highlight"
-            end
-        end)
- 
-        game.Players.PlayerRemoving:Connect(function(playerRemoved)
-            playerRemoved.Character:FindFirstChild("HumanoidRootPart").Highlight:Destroy()
-        end)
- 
-        RunService.Heartbeat:Connect(function()
-            for i, v in pairs(Players) do
-                repeat wait() until v.Character
-                if not v.Character:FindFirstChild("HumanoidRootPart"):FindFirstChild("Highlight") then
-                    local highlightClone = highlight:Clone()
-                    highlightClone.Adornee = v.Character
-                    highlightClone.Parent = v.Character:FindFirstChild("HumanoidRootPart")
-                    highlightClone.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                    highlightClone.Name = "Highlight"
-                    task.wait(1)
-                end
-            end
-        end)
-    end
-end
-
+-- Functions for gameplay enhancements
 function highjump()
-    while _G.HighJump == true do
+    while _G.HighJump do
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
@@ -67,7 +27,7 @@ function highjump()
 end
 
 function highspeed()
-    while _G.HighSpeed == true do
+    while _G.HighSpeed do
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
         local humanoid = character:WaitForChild("Humanoid")
@@ -77,12 +37,45 @@ function highspeed()
 end
 
 function autoclick()
-    while _G.AutoTap == true do
+    while _G.AutoTap do
         game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("AddSpeed"):FireServer()
-        wait(0.0000000000001)
+        wait(0.01)
     end
 end
 
+-- Highlight players function
+local function highlightPlayers()
+    local RunService = game:GetService("RunService")
+    local Players = game:GetService("Players")
+    local highlightTemplate = Instance.new("Highlight")
+    highlightTemplate.Name = "Highlight"
+    highlightTemplate.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+
+    local function addHighlight(player)
+        player.CharacterAdded:Connect(function(character)
+            local rootPart = character:WaitForChild("HumanoidRootPart")
+            if not rootPart:FindFirstChild("Highlight") then
+                local highlight = highlightTemplate:Clone()
+                highlight.Adornee = character
+                highlight.Parent = rootPart
+            end
+        end)
+    end
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            addHighlight(player)
+        end
+    end
+
+    Players.PlayerAdded:Connect(addHighlight)
+
+    while _G.HighlightPlayers do
+        wait(0.5)
+    end
+end
+
+-- GUI Setup
 local FarmTab = Window:MakeTab({
     Name = "Main",
     Icon = "rbxassetid://4483345998",
@@ -94,7 +87,9 @@ FarmTab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.AutoTap = Value
-        autoclick()
+        if Value then
+            spawn(autoclick)
+        end
     end
 })
 
@@ -103,25 +98,30 @@ FarmTab:AddToggle({
     Default = false,
     Callback = function(Value)
         _G.HighSpeed = Value
-        highspeed()
-    end    
-})
-
-FarmTab:AddToggle({
-	Name = "High Jump",
-	Default = false,
-	Callback = function(Value)
-		_G.HighJump = Value
-        highjump()
-	end    
-})
-
-	FarmTab:AddToggle({
-    Name = "Esp Players(Beta)",
-    Default = false,
-    Callback = function(Value)
-        _G.Esp = Value
-        esp()
+        if Value then
+            spawn(highspeed)
+        end
     end
 })
 
+FarmTab:AddToggle({
+    Name = "High Jump",
+    Default = false,
+    Callback = function(Value)
+        _G.HighJump = Value
+        if Value then
+            spawn(highjump)
+        end
+    end
+})
+
+FarmTab:AddToggle({
+    Name = "Highlight Players",
+    Default = false,
+    Callback = function(Value)
+        _G.HighlightPlayers = Value
+        if Value then
+            spawn(highlightPlayers)
+        end
+    end
+})

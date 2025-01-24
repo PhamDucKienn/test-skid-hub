@@ -1,5 +1,5 @@
 -- Load OrionLib
-local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/PhamDucKienn/Gui/refs/heads/main/Gui"))()
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Orion/refs/heads/main/source"))()
 
 local Window = OrionLib:MakeWindow({
     Name = "Skid Hub V1.5(Beta)⚡",
@@ -132,17 +132,8 @@ PlayerTab:AddSlider({
     Callback = function(Value)
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        if character then
-            local humanoid = character:FindFirstChild("Humanoid")
-            if humanoid then
-                humanoid.WalkSpeed = Value
-                print("WalkSpeed set to:", Value)
-            else
-                warn("Humanoid not found!")
-            end
-        else
-            warn("Character not found!")
-        end
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.WalkSpeed = Value
     end
 })
 
@@ -157,16 +148,7 @@ PlayerTab:AddSlider({
     Callback = function(Value)
         local player = game.Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
-        if character then
-            local humanoid = character:FindFirstChild("Humanoid")
-            if humanoid then
-                humanoid.JumpPower = Value
-                print("JumpPower set to:", Value)
-            else
-                warn("Humanoid not found!")
-            end
-        else
-            warn("Character not found!")
-        end
+        local humanoid = character:WaitForChild("Humanoid")
+        humanoid.JumpPower = Value
     end
 })
